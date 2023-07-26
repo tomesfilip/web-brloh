@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import { FcGoogle } from 'react-icons/fc';
+import { toast } from 'react-toastify';
+import axios, { isAxiosError } from 'axios';
 
 import useRegisterModal from '../../hooks/useRegisterModal';
 
@@ -28,8 +30,31 @@ const RegisterModal = () => {
     },
   });
 
-  const onSubmit: SubmitHandler<FieldValues> = async () => {
-    console.log('Submitting');
+  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+    setIsLoading(true);
+    try {
+      const res = await axios.post('/api/register', data);
+      if (res.status === 200) {
+        registerModal.onClose();
+        reset();
+      }
+    } catch (error) {
+      if (isAxiosError(error)) {
+        toast.error(error.response?.data, {
+          position: 'top-center',
+          autoClose: 3000,
+          closeOnClick: true,
+        });
+      } else {
+        toast.error('Nastala chyba při registraci', {
+          position: 'top-center',
+          autoClose: 3000,
+          closeOnClick: true,
+        });
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const bodyContent = (

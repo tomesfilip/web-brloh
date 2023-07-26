@@ -1,0 +1,127 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "cockroachdb"
+  url      = env("DATABASE_URL")
+}
+
+// model City {
+//   id          String    @id @default(cuid())
+//   city_name   String    @unique @db.String(255)
+//   postal_code BigInt    @unique
+//   listings    Listing[]
+// }
+
+model Facility {
+  id            String    @id @default(cuid())
+  facility_name String    @unique @db.String(255)
+  available     Boolean
+  listings      Listing[]
+}
+
+model FavoriteListing {
+  id         String  @id @default(cuid())
+  user_id    String
+  listing_id String
+  listing    Listing @relation(fields: [listing_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user       User    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model ListingImage {
+  id         String  @id @default(cuid())
+  listing_id String
+  image_name String? @db.String(255)
+  image_url  String  @unique @db.String(255)
+  listing    Listing @relation(fields: [listing_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Listing {
+  id                 String            @id @default(cuid())
+  // city_id            String
+  user_id            String
+  restriction_id     String?
+  facility_id        String?
+  home_type          String            @db.String(50)
+  location           String            @db.String(100)
+  room_count         BigInt
+  total_living_space BigInt
+  price              BigInt
+  energies_price     BigInt?
+  description        String?           @db.String(255)
+  available_from     DateTime          @db.Date
+  available_to       DateTime?         @db.Date
+  created_at         DateTime          @db.Date
+  updated_at         DateTime          @db.Date
+  favorite_listing   FavoriteListing[]
+  listing_images     ListingImage[]
+  // city               City              @relation(fields: [city_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  facility           Facility?         @relation(fields: [facility_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  restriction        Restriction?      @relation(fields: [restriction_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user               User              @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  rooms              Room[]
+}
+
+model Restriction {
+  id               String    @id @default(cuid())
+  restriction_name String    @unique @db.String(255)
+  allowed          Boolean
+  listings         Listing[]
+}
+
+model RoomImage {
+  id         String @id @default(cuid())
+  room_id    String
+  image_name String @db.String(50)
+  image_url  String @db.String(255)
+  room       Room   @relation(fields: [room_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Room {
+  id                 String      @id @default(cuid())
+  listing_id         String?
+  name               String      @db.String(255)
+  total_living_space BigInt
+  furnished          Boolean
+  room_images        RoomImage[]
+  listing            Listing?    @relation(fields: [listing_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model User {
+  id                  String            @id @default(cuid())
+  email               String            @unique @db.String(100)
+  username            String            @unique @db.String(255)
+  password            String            @db.String(100)
+  phone_number        String?           @unique @db.String(20)
+  created_at          DateTime          @default(now()) @db.Timestamp(6)
+  updated_at          DateTime          @default(now()) @db.Timestamp(6)
+  age                 BigInt?
+  gender              String?           @db.String(50)
+  school_name         String?           @db.String(50)
+  faculty_name        String?           @db.String(50)
+  specialization_name String?           @db.String(50)
+  photo               String?           @db.String(255)
+  email_verified_at   DateTime?         @db.Date
+  favorite_listings   FavoriteListing[]
+  listings            Listing[]
+  accounts            Account[]
+}
+
+model Account {
+  id                  String  @id @default(cuid())
+  user_id             String
+  type                String
+  provider            String
+  provider_account_id String
+  refresh_token       String? @db.String(255)
+  expires_at          Int?
+  token_type          String?
+  scope               String?
+  id_token            String?
+  session_state       String?
+
+  user User @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([provider, provider_account_id])
+}

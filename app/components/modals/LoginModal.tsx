@@ -8,6 +8,8 @@ import Modal from './Modal';
 import useLoginModal from '../../hooks/useLoginModal';
 import useRegisterModal from '../../hooks/useRegisterModal';
 import PasswordInput from '../inputs/PasswordInput';
+import { toast } from 'react-toastify';
+import { signIn } from 'next-auth/react';
 
 const LoginModal = () => {
   const registerModal = useRegisterModal();
@@ -26,8 +28,38 @@ const LoginModal = () => {
     },
   });
 
-  const onSubmit: SubmitHandler<FieldValues> = () => {
-    console.log('Submitting');
+  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+    setIsLoading(true);
+
+    try {
+      const res = await signIn('credentials', {
+        ...data,
+        redirect: false,
+      });
+
+      if (res?.error) {
+        toast.error(res.error, {
+          position: 'top-center',
+          autoClose: 3000,
+          closeOnClick: true,
+        });
+        return;
+      }
+
+      if (res?.ok) {
+        loginModal.onClose();
+        reset();
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('Nastala chyba při přihlasování', {
+        position: 'top-center',
+        autoClose: 3000,
+        closeOnClick: true,
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const bodyContent = (

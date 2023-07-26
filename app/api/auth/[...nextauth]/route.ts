@@ -5,7 +5,7 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcrypt';
 
 import { db } from '@/app/configs/db.config';
-import { getUser } from '../services/user.service';
+import { getUser } from '../../services/user.service';
 
 export const authOptions: AuthOptions = {
   adapter: PrismaAdapter(db),
@@ -22,17 +22,18 @@ export const authOptions: AuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          throw new Error('Invalid credentails');
+          throw new Error('Špatné přihlasovací údaje.');
         }
 
         const user = await getUser(undefined, credentials.email);
+        console.log(user);
         if (!user || !user?.password) {
-          throw new Error('Invalid credentails');
+          throw new Error('Špatné přihlasovací údaje.');
         }
 
         const match = await bcrypt.compare(credentials.password, user.password);
         if (!match) {
-          throw new Error('Incorrect password.');
+          throw new Error('Neplatné heslo.');
         }
 
         return user;
@@ -49,4 +50,6 @@ export const authOptions: AuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
 };
 
-export default NextAuth(authOptions);
+const handler = NextAuth(authOptions);
+
+export { handler as GET, handler as POST };

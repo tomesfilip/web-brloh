@@ -3,13 +3,13 @@ import { User } from '@prisma/client';
 import bcrypt from 'bcrypt';
 
 export const getUser = async (
-  id?: string,
-  email?: string,
+  id: string | null,
+  email: string | null,
 ): Promise<User | null> => {
   return db.user.findUnique({
     where: {
-      id: id,
-      email: email,
+      id: id || undefined,
+      email: email || undefined,
     },
   });
 };

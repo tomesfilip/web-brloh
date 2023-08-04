@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     throw new Error('Email is not valid.');
   }
 
-  const user = await getUser(undefined, email);
+  const user = await getUser(null, email);
   if (user) {
     throw new Error('Email already in use.');
   }

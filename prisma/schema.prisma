@@ -103,27 +103,45 @@ model User {
   faculty_name        String?           @db.String(50)
   specialization_name String?           @db.String(50)
   photo               String?           @db.String(255)
-  emailVerified       DateTime?         @db.Date
+  emailVerified       DateTime?
   favorite_listings   FavoriteListing[]
   listings            Listing[]
   accounts            Account[]
+  sessions            Session[]
 }
 
 model Account {
   id                String  @id @default(cuid())
-  user_id           String
+  userId            String
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.String(255)
-  access_token      String? @db.String(255)
+  refresh_token     String? @db.String()
+  access_token      String? @db.String()
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String?
+  id_token          String? @db.String()
   session_state     String?
 
-  user User @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verificationtokens")
 }

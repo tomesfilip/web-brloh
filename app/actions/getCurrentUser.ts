@@ -1,8 +1,9 @@
+import { User } from '@prisma/client';
 import { getServerSession } from 'next-auth/next';
 import { getUser } from '../api/services/user.service';
 import { authOptions } from '../lib/auth';
 
-const getCurrentUser = async () => {
+const getCurrentUser = async (): Promise<User | null> => {
   try {
     const session = await getServerSession(authOptions);
 

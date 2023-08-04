@@ -1,13 +1,19 @@
 'use client';
 
+import { signOut } from 'next-auth/react';
 import { useState } from 'react';
 import { AiOutlineUser } from 'react-icons/ai';
 
-import MenuItem from './MenuItem';
-import useRegisterModal from '../../../hooks/useRegisterModal';
+import { User } from '@prisma/client';
 import useLoginModalStore from '../../../hooks/useLoginModal';
+import useRegisterModal from '../../../hooks/useRegisterModal';
+import MenuItem from './MenuItem';
 
-const UserMenu = () => {
+interface UserMenuProps {
+  user: User | null;
+}
+
+const UserMenu = ({ user }: UserMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const registerModal = useRegisterModal();
   const loginModal = useLoginModalStore();
@@ -27,14 +33,23 @@ const UserMenu = () => {
       </div>
       {isOpen && (
         <div className="absolute rounded-xl flex flex-col w-max shadow-md bg-white overflow-hidden right-0 top-14 text-sm">
-          <MenuItem
-            onClick={() => handleMenuClick(registerModal.onOpen)}
-            label="Registrovat se"
-          />
-          <MenuItem
-            onClick={() => handleMenuClick(loginModal.onOpen)}
-            label="Přihlásit se"
-          />
+          {user?.username ? (
+            <MenuItem
+              onClick={() => handleMenuClick(signOut)}
+              label="Odhlásit se"
+            />
+          ) : (
+            <>
+              <MenuItem
+                onClick={() => handleMenuClick(registerModal.onOpen)}
+                label="Registrovat se"
+              />
+              <MenuItem
+                onClick={() => handleMenuClick(loginModal.onOpen)}
+                label="Přihlásit se"
+              />
+            </>
+          )}
         </div>
       )}
     </div>

@@ -33,7 +33,7 @@ const UserMenu = ({ user }: UserMenuProps) => {
       </div>
       {isOpen && (
         <div className="absolute rounded-xl flex flex-col w-max shadow-md bg-white overflow-hidden right-0 top-14 text-sm">
-          {user?.username ? (
+          {user?.email ? (
             <MenuItem
               onClick={() => handleMenuClick(signOut)}
               label="Odhlásit se"

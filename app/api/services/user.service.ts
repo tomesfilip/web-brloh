@@ -15,15 +15,17 @@ export const getUser = async (
 };
 
 export const createUser = async (
-  userData: Pick<User, 'username' | 'email' | 'password'>,
+  name: string,
+  email: string,
+  password: string,
 ): Promise<User> => {
   const salt = await bcrypt.genSalt();
-  const hash = await bcrypt.hash(userData.password, salt);
+  const hash = await bcrypt.hash(password, salt);
 
   return db.user.create({
     data: {
-      email: userData.email,
-      username: userData.username,
+      email: email,
+      name: name,
       password: hash,
     },
   });

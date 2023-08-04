@@ -4,9 +4,9 @@ import { createUser, getUser } from '../services/user.service';
 
 export async function POST(req: Request) {
   const body = await req.json();
-  const { email, username, password } = body;
+  const { email, name, password } = body;
 
-  if (!email || !username || !password) {
+  if (!email || !name || !password) {
     throw new Error('All required fields must be filled.');
   }
 
@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     throw new Error('Email already in use.');
   }
 
-  const createdUser = await createUser({ email, username, password });
+  const createdUser = await createUser(email, name, password);
 
   return NextResponse.json(createdUser);
 }

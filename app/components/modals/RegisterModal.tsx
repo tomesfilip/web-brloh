@@ -1,17 +1,17 @@
 'use client';
 
+import axios, { isAxiosError } from 'axios';
+import { signIn } from 'next-auth/react';
 import { useState } from 'react';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import { FcGoogle } from 'react-icons/fc';
 import { toast } from 'react-toastify';
-import axios, { isAxiosError } from 'axios';
 
 import useRegisterModal from '../../hooks/useRegisterModal';
-
-import Modal from './Modal';
-import Input from '../inputs/Input';
 import Button from '../Button';
+import Input from '../inputs/Input';
 import PasswordInput from '../inputs/PasswordInput';
+import Modal from './Modal';
 
 const RegisterModal = () => {
   const registerModal = useRegisterModal();
@@ -24,7 +24,7 @@ const RegisterModal = () => {
     formState: { errors },
   } = useForm<FieldValues>({
     defaultValues: {
-      username: '',
+      name: '',
       email: '',
       password: '',
     },
@@ -68,7 +68,7 @@ const RegisterModal = () => {
         required
       />
       <Input
-        id="username"
+        id="name"
         label="Jméno"
         disabled={isLoading}
         register={register}
@@ -92,7 +92,7 @@ const RegisterModal = () => {
       <Button
         label="Přihlásit se pomocí Google"
         icon={FcGoogle}
-        onClick={() => console.log('sign in - google')}
+        onClick={() => signIn('google')}
       />
     </div>
   );

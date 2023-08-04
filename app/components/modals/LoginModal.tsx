@@ -1,20 +1,22 @@
 'use client';
 
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 
-import Input from '../inputs/Input';
-import Modal from './Modal';
 import useLoginModal from '../../hooks/useLoginModal';
 import useRegisterModal from '../../hooks/useRegisterModal';
+import Input from '../inputs/Input';
 import PasswordInput from '../inputs/PasswordInput';
-import { toast } from 'react-toastify';
-import { signIn } from 'next-auth/react';
+import Modal from './Modal';
 
 const LoginModal = () => {
   const registerModal = useRegisterModal();
   const loginModal = useLoginModal();
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const {
     register,
@@ -49,6 +51,7 @@ const LoginModal = () => {
       if (res?.ok) {
         loginModal.onClose();
         reset();
+        router.refresh();
       }
     } catch (error) {
       console.error(error);

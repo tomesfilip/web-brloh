@@ -6,8 +6,10 @@ import { useState } from 'react';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
+import { FcGoogle } from 'react-icons/fc';
 import useLoginModal from '../../hooks/useLoginModal';
 import useRegisterModal from '../../hooks/useRegisterModal';
+import Button from '../Button';
 import Input from '../inputs/Input';
 import PasswordInput from '../inputs/PasswordInput';
 import Modal from './Modal';
@@ -86,6 +88,17 @@ const LoginModal = () => {
     </div>
   );
 
+  const footerContent = (
+    <div className="flex flex-col items-center gap-4">
+      <hr />
+      <Button
+        label="Přihlásit se pomocí Google"
+        icon={FcGoogle}
+        onClick={() => signIn('google')}
+      />
+    </div>
+  );
+
   return (
     <Modal
       disabled={isLoading}
@@ -95,6 +108,7 @@ const LoginModal = () => {
       title="Přihlásit se"
       actionLabel="Pokračovat"
       body={bodyContent}
+      footer={footerContent}
     />
   );
 };

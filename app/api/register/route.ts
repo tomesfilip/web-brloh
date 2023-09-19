@@ -1,3 +1,4 @@
+import { sendEmail } from '@/app/helpers/mailer';
 import { NextResponse } from 'next/server';
 import validator from 'validator';
 import { createUser, getUser } from '../services/user.service';
@@ -19,7 +20,8 @@ export async function POST(req: Request) {
     throw new Error('Email already in use.');
   }
 
-  const createdUser = await createUser(email, name, password);
+  const createdUser = await createUser(name, email, password);
+  await sendEmail({ email, emailType: 'VERIFY', userId: createdUser.id });
 
   return NextResponse.json(createdUser);
 }

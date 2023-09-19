@@ -89,25 +89,30 @@ model Room {
 }
 
 model User {
-  id                  String            @id @default(cuid())
-  email               String?           @unique @db.String(100)
-  name                String?           @unique @db.String(255)
+  id                  String   @id @default(cuid())
+  email               String?  @unique @db.String(100)
+  name                String?  @unique @db.String(255)
   image               String?
-  password            String?           @db.String(100)
-  phone_number        String?           @unique @db.String(20)
-  created_at          DateTime          @default(now()) @db.Timestamp(6)
-  updated_at          DateTime          @default(now()) @db.Timestamp(6)
+  password            String?  @db.String(100)
+  phone_number        String?  @unique @db.String(20)
+  created_at          DateTime @default(now()) @db.Timestamp(6)
+  updated_at          DateTime @default(now()) @db.Timestamp(6)
   age                 BigInt?
-  gender              String?           @db.String(50)
-  school_name         String?           @db.String(50)
-  faculty_name        String?           @db.String(50)
-  specialization_name String?           @db.String(50)
-  photo               String?           @db.String(255)
-  emailVerified       DateTime?
-  favorite_listings   FavoriteListing[]
-  listings            Listing[]
-  accounts            Account[]
-  sessions            Session[]
+  gender              String?  @db.String(50)
+  school_name         String?  @db.String(50)
+  faculty_name        String?  @db.String(50)
+  specialization_name String?  @db.String(50)
+  photo               String?  @db.String(255)
+  isVerified          Boolean  @default(false)
+
+  verifyToken               String?           @unique @db.String()
+  verifyTokenExpiry         DateTime?
+  forgotPasswordToken       String?           @unique @db.String()
+  forgotPasswordTokenExpiry DateTime?
+  favorite_listings         FavoriteListing[]
+  listings                  Listing[]
+  accounts                  Account[]
+  sessions                  Session[]
 }
 
 model Account {
@@ -135,13 +140,4 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
-
-  @@unique([identifier, token])
-  @@map("verificationtokens")
 }

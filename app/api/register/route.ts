@@ -1,9 +1,9 @@
 import { sendEmail } from '@/app/helpers/mailer';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import validator from 'validator';
 import { createUser, getUser } from '../services/user.service';
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   const body = await req.json();
   const { email, name, password } = body;
 

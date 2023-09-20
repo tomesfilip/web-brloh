@@ -51,7 +51,7 @@ export const sendEmail = async ({ email, emailType, userId }: Props) => {
     });
 
     return mailRes;
-  } catch (err: any) {
-    throw new Error(err.message);
+  } catch (error: any) {
+    throw new Error(error.message);
   }
 };
